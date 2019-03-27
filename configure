@@ -1,0 +1,5 @@
+#!/bin/sh
+
+conda install sympy scipy
+pip install blueqat
+
