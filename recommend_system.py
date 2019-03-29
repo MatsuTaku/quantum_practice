@@ -1,4 +1,5 @@
 import numpy as np
+from matrix_factorization import MF_quantam
 
 def jac(ss1, ss2):
 	return len(set(ss1) & set(ss2)) / len(set(ss1) | set(ss2))

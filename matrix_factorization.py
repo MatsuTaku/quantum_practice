@@ -47,7 +47,7 @@ class MF_classic:
 
 
 class MF_quantam:
-    def __init__(self, V, k, steps=50, alpha=0.02, beta=0.02, threshold=0.001):
+    def __init__(self, V, k, steps=5000, alpha=0.002, beta=0.02, threshold=0.001):
         self.V = V
         self.k = min(k, 1024)
         self.steps = steps
@@ -57,31 +57,39 @@ class MF_quantam:
 
     def run(self):
         n, m = len(self.V), len(self.V[0])
-        W = np.random.rand(n, self.k)   # W is nonnegative matrix
-        H = np.random.rand(self.k, m)       # H is binary matrix
-        for step in range(self.steps):
+        # Init W to nonnegative matrix
+        W = np.random.rand(n, self.k)
+        # Init H to binary matrix without zero column
+        H = np.random.randint(0, 2, (self.k, m), dtype='bool')
+        # Anneal W/H untill conveged
+        prev_error = la.norm(self.V - np.dot(W, H))
+        for upper_step in range(10):
             # Solve W
-            for i in range(n):
-                for j in range(m):
-                    if self.V[i][j] == 0:
-                        continue
-                    error = (self.V[i][j] - np.dot(W[i], H[:, j])) ** 2
-                    error += self.beta * ((la.norm(W[i]) ** 2))
-                    for kk in range(self.k):
-                        W[i][kk] += self.alpha * 2 * error * H[kk][j]
-                        if W[i][kk] < 0:
-                            W[i][kk] = 0
+            for step in range(self.steps // 10):
+                for i in range(n):
+                    for j in range(m):
+                        v = self.V[i][j]
+                        if v == 0:
+                            continue
+                        error = v - np.dot(W[i], H[:, j])
+                        for kk in range(self.k):
+                            if H[kk][j]:
+                                W[i][kk] += self.alpha * (2 * error)
+                error = la.norm(self.V - np.dot(W, H))
+                error += self.beta * la.norm(W)
+                if error < self.threshold:
+                    break
 
             # Solve H
             a = np.zeros((m, self.k))
             for i in range(m):
                 for l in range(n):
-                    vli = self.V[l][i]
-                    if vli == 0:
+                    v = self.V[l][i]
+                    if v == 0:
                         continue
                     for j in range(self.k):
-                        wlj = W[l][j]
-                        a[i][j] += wlj * (wlj - vli*2)
+                        w = W[l][j]
+                        a[i][j] += w * (w - v*2)
             b = np.zeros((self.k, self.k))
             for i in range(self.k):
                 for j in range(i+1, self.k):
@@ -97,7 +105,7 @@ class MF_quantam:
                 H[:, j] = result.most_common(1)[0][0]
 
             error = la.norm(self.V - np.dot(W, H))
-            if error < self.threshold:
+            if prev_error > error and prev_error - error < self.threshold:
                 break
 
         return W, H
@@ -111,15 +119,15 @@ if __name__ == '__main__':
         [1,0,0,4],
         [0,1,5,4]
     ])
-    # %%
-    nP, nQ = MF_classic(R, int(len(R[0])*0.5)).run()
+    # %% classic MF
+    nP, nQ = MF_classic(R, 2).run()
     print(nP.T)
     print(nQ)
     nR = np.dot(nP.T, nQ)
     print(nR)
 
-    # %% qaoa
-    nP, nQ = MF_quantam(R, int(len(R[0])*0.6)).run()
+    # %% Nonnegative/Binary matrix factorization by quantum approach
+    nP, nQ = MF_quantam(R, 2).run()
     print(nP)
     print(nQ)
     nR = np.dot(nP, nQ)
