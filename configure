@@ -1,5 +1,6 @@
 #!/bin/sh
 
 conda install sympy scipy
-pip install blueqat
+pip install blueqat 
+pip install openfermion openfermionblueqat
 

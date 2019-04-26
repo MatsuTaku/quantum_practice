@@ -1,0 +1,15 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	0	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+np	/Users/takumamatsumoto/Codes/quantam/quantum_practice/blueqat/molecule.py	/^import numpy as np$/;"	namespace	line:4
+get_molecule	/Users/takumamatsumoto/Codes/quantam/quantum_practice/blueqat/molecule.py	/^def get_molecule(bond_len):$/;"	function	line:6
+bond_len	/Users/takumamatsumoto/Codes/quantam/quantum_practice/blueqat/molecule.py	/^bond_len = 1.45$/;"	variable	line:18
+m	/Users/takumamatsumoto/Codes/quantam/quantum_practice/blueqat/molecule.py	/^m = get_molecule("{:.3}".format(bond_len))$/;"	variable	line:19
+h	/Users/takumamatsumoto/Codes/quantam/quantum_practice/blueqat/molecule.py	/^h = bravyi_kitaev(get_fermion_operator(m.get_molecular_hamiltonian()))$/;"	variable	line:20
+runner	/Users/takumamatsumoto/Codes/quantam/quantum_practice/blueqat/molecule.py	/^runner = vqe.Vqe(UCCAnsatz(h, 6, Circuit().x[0]))$/;"	variable	line:22
+result	/Users/takumamatsumoto/Codes/quantam/quantum_practice/blueqat/molecule.py	/^result = runner.run()$/;"	variable	line:23
+matplotlib	/Users/takumamatsumoto/Codes/quantam/quantum_practice/blueqat/molecule.py	/^import matplotlib.pyplot as plt$/;"	namespace	line:29
+plt	/Users/takumamatsumoto/Codes/quantam/quantum_practice/blueqat/molecule.py	/^import matplotlib.pyplot as plt$/;"	namespace	line:29
