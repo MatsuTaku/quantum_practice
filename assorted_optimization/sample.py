@@ -4,6 +4,15 @@ from blueqat.pauli import qubo_bit as q
 import itertools
 from opt import ConstOpt
 
+def make_pieces(N, M):
+    A = np.zeros((N, M), dtype=bool)
+    for i in range(N):
+        n = np.random.randint(1, M)
+        for j in range(n):
+            A[i,np.random.randint(M)] = 1
+    return A
+
+
 def solver_minimum_assortment(A, L, verbose=False):
     N = len(A)
     M = len(A[0])
@@ -114,15 +123,6 @@ def sequential_assortment(A):
             field[s+i] += p[i]
 
     return len(field)
-
-
-def make_pieces(N, M):
-    A = np.zeros((N, M), dtype=bool)
-    for i in range(N):
-        n = np.random.randint(1, M)
-        for j in range(n):
-            A[i,np.random.randint(M)] = 1
-    return A
 
 
 if __name__ == '__main__':
