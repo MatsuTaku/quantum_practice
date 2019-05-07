@@ -2,7 +2,7 @@ import numpy as np
 from blueqat import opt
 from blueqat.pauli import qubo_bit as q
 import itertools
-from opt import ConstOpt
+from opt import ConstOpt, AsyncOpt
 
 def make_pieces(N, M):
     A = np.zeros((N, M), dtype=bool)
@@ -20,11 +20,12 @@ def solver_minimum_assortment(A, L, verbose=False):
         return False
     W = L - M + 1
     Q = N * W
-    # H1 = opt.zeros(Q)
-    # for i in range(N):
-    #     for j in range(W):
-    #         for k in range(j,W):
-    #             H1[W*i+j,W*i+k] = -1 if j == k else 2
+
+    H1 = opt.zeros(Q)
+    for i in range(N):
+        for j in range(W):
+            for k in range(j,W):
+                H1[W*i+j,W*i+k] = -1 if j == k else 2
 
     H2 = opt.zeros(Q)
     for a in range(N):
@@ -46,8 +47,8 @@ def solver_minimum_assortment(A, L, verbose=False):
 
     alpha = 1.0
     beta = 1.0
-    # qubo = H1*alpha + H2*beta
-    qubo = H2
+    qubo = H1*alpha + H2*beta
+    # qubo = H2
     # print(qubo)
     shots = 100
     for _ in range(shots):
@@ -81,7 +82,7 @@ def solver_minimum_assortment(A, L, verbose=False):
     return False
 
 
-def quantum_assortment(A):
+def quantum_assortment(A, verbose=False):
     sum = 0
     for l in A:
         for p in l:
@@ -91,7 +92,7 @@ def quantum_assortment(A):
     while l <= r:
         c = (l+r)//2
         print('c', c)
-        if solver_minimum_assortment(A, c):
+        if solver_minimum_assortment(A, c, verbose=verbose):
             res = c
             r = c-1
         else:
@@ -135,10 +136,10 @@ if __name__ == '__main__':
     #               [0,0,1,1],
     #               [1,0,0,1]])
 
-    N = 0xf
-    M = 8
+    N = 8
+    M = 6
     A = make_pieces(N, M)
     print(np.asarray(A, int))
 
-    print('quantum L', quantum_assortment(A))
+    print('quantum L', quantum_assortment(A, verbose=True))
     print('sequential L', sequential_assortment(A))
